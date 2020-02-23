@@ -48,17 +48,17 @@ pipeline {
         }
 
         stage ('Run scale-up job') {
-            environment {
-                BUILD_NUMBER = "${env.FLEXY_BUILD_NUMBER}"
-            }
+            // environment {
+            //     KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
+            // }
             steps {
                 script {
                     def rhelProps = readJSON file: windows-node-installer.json
-                    KUBECONFIG_URL=https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig
+                    KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
                     build job: 'ocp4-rhel-scaleup-runner', parameters: [
                         string(name: 'OPERATION', value: "SCALEUP"),
                         string(name: 'WINC_WORKERS', value: "TODO: generate windows worker list"),
-                        string(name: 'KUBECONFIG_URL', value: "${KUBECONFIG_URL}"),
+                        string(name: 'KUBECONFIG_URL', value: "${env.KUBECONFIG_URL}"),
                         string(name: 'OCP_VERSION', value: "4.4"),
                         [$class: 'LabelParameterValue', name: 'JENKINS_SLAVE_LABEL', label: "${params.JENKINS_SLAVE_LABEL}"],
                     ], wait: true

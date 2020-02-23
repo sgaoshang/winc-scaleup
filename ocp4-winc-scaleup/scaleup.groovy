@@ -46,6 +46,7 @@ pipeline {
                         sh """
                         wget ${KUBECONFIG_URL} --no-check-certificate
                         wget ${WNI_URL}
+                        chmod 777 wni
                         ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
                         """
                       }
@@ -72,7 +73,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'windows-node-installer.json', fingerprint: true
-            cleanWs()
+            // cleanWs()
         }
     }
 }

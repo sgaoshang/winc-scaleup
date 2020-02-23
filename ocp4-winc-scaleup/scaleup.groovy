@@ -5,6 +5,7 @@ pipeline {
 
     environment {
         KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
+        WNI_URL="https://github.com/openshift/windows-machine-config-bootstrapper/releases/download/v4.4.2-alpha/wni"
     }
 
     stages {
@@ -43,7 +44,8 @@ pipeline {
                         file(credentialsId: 'b73d6ed3-99ff-4e06-b2d8-64eaaf69d1db', variable: 'AWS_CREDS'),
                         ]) {
                         sh """
-                        wget ${KUBECONFIG_URL}
+                        wget ${KUBECONFIG_URL} --no-check-certificate
+                        wget ${WNI_URL}
                         ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
                         """
                       }
@@ -53,13 +55,9 @@ pipeline {
         }
 
         stage ('Run scale-up job') {
-            // environment {
-            //     KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
-            // }
             steps {
                 script {
                     def rhelProps = readJSON file: windows-node-installer.json
-                    KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
                     build job: 'ocp4-rhel-scaleup-runner', parameters: [
                         string(name: 'OPERATION', value: "SCALEUP"),
                         string(name: 'WINC_WORKERS', value: "TODO: generate windows worker list"),

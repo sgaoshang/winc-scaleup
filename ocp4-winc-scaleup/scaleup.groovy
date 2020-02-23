@@ -64,8 +64,7 @@ pipeline {
                         string(name: 'WINC_WORKERS', value: "TODO: generate windows worker list"),
                         string(name: 'KUBECONFIG_URL', value: "${env.KUBECONFIG_URL}"),
                         string(name: 'OCP_VERSION', value: "4.4"),
-                        // [$class: 'LabelParameterValue', name: 'JENKINS_SLAVE_LABEL', label: "${params.JENKINS_SLAVE_LABEL}"],
-                        string(name: 'JENKINS_SLAVE_LABEL', value: "sgao-winc"),
+                        [$class: 'LabelParameterValue', name: 'JENKINS_SLAVE_LABEL', label: "${params.JENKINS_SLAVE_LABEL}"],
                     ], wait: true
                 }
             }

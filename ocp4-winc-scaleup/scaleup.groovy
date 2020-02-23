@@ -59,7 +59,7 @@ pipeline {
             steps {
                 script {
                     // def rhelProps = readJSON file: windows-node-installer.json
-                    build job: 'ocp4-rhel-scaleup-runner', parameters: [
+                    build job: 'ocp4-winc-scaleup-runner', parameters: [
                         string(name: 'OPERATION', value: "SCALEUP"),
                         string(name: 'WINC_WORKERS', value: "TODO: generate windows worker list"),
                         string(name: 'KUBECONFIG_URL', value: "${env.KUBECONFIG_URL}"),

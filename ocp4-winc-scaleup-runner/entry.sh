@@ -9,26 +9,34 @@ export WINC_REPO="windows-machine-config-bootstrapper"
 cd ${RUNNER_WORKER_DIR}
   # wget KUBECONFIG_URL
   # export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
-  git clone https://github.com/openshift/${WINC_REPO} --depth=1
+  export CLUSTER_ADDRESS="test"
+  # git clone https://github.com/openshift/${WINC_REPO} --depth=1
 
-  # TODO: add multply workes parallel
-  echo ${WINC_WORKERS}
+  # TODO: add multply workes in parallel when supported in wsu
+  for WORKER in ${WINC_WORKERS}
+  do
+    echo ${WORKER}
+    IFS=","; read -ra WORK_INFO <<< ${WORKER}
+    export WINC_NODE_IP=${WORK_INFO[0]}
+    export WINC_NODE_USER=${WORK_INFO[1]}
+    export WINC_NODE_PASSWORD=${WORK_INFO[2]}
 
-  # inventory generation
-  ansible-playbook generate_inventory.yaml -v
-  cat inventory
+    # inventory generation
+    ansible-playbook generate_inventory.yaml -v
+    cat inventory
 
-  # Check windows connection
-  ansible win -i inventory -m win_ping -v
+    # Check windows connection
+    ansible win -i inventory -m win_ping -v
 
-  case "${OPERATION}" in
-  "SCALEUP" )
-    ansible-playbook -i inventory scaleup_pre_hook.yaml -v
-    ansible-playbook -i inventory ${RUNNER_WORKER_DIR}/${WINC_REPO}/tools/ansible/tasks/wsu/main.yml -v
-    ansible-playbook -i inventory scaleup_post_hook.yaml -v
-  ;;
-  * )
-    echo "Unknown operation => ${OPERATION} <=, possible ops are 'SCALEUP'"
-  ;;
-  esac
+    case "${OPERATION}" in
+    "SCALEUP" )
+      ansible-playbook -i inventory scaleup_pre_hook.yaml -v
+      ansible-playbook -i inventory ${RUNNER_WORKER_DIR}/${WINC_REPO}/tools/ansible/tasks/wsu/main.yml -v
+      ansible-playbook -i inventory scaleup_post_hook.yaml -v
+    ;;
+    * )
+      echo "Unknown operation => ${OPERATION} <=, possible ops are 'SCALEUP'"
+    ;;
+    esac
+  done
 cd -

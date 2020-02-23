@@ -58,7 +58,7 @@ pipeline {
         stage ('Run scale-up job') {
             steps {
                 script {
-                    def rhelProps = readJSON file: windows-node-installer.json
+                    // def rhelProps = readJSON file: windows-node-installer.json
                     build job: 'ocp4-rhel-scaleup-runner', parameters: [
                         string(name: 'OPERATION', value: "SCALEUP"),
                         string(name: 'WINC_WORKERS', value: "TODO: generate windows worker list"),

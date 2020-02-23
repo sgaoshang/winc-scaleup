@@ -3,10 +3,11 @@ pipeline {
         label "${params.JENKINS_SLAVE_LABEL}"
     }
 
+    environment {
+        KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
+    }
+
     stages {
-        environment {
-            KUBECONFIG_URL="https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/Launch%20Environment%20Flexy/${env.FLEXY_BUILD_NUMBER}/artifact/workdir/install-dir/auth/kubeconfig"
-        }
         stage('set job name to triggered user') {
             steps {
                 script {

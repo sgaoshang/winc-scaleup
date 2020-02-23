@@ -3,7 +3,7 @@
 set -xe
 
 # export RUNNER_WORKER_DIR=${WORKSPACE}/v4-testing-misc/v4-scaleup-next/ocp4-winc-scaleup-runner/${OCP_VERSION}
-export RUNNER_WORKER_DIR=${WORKSPACE}/${JOB_NAME}/ocp4-winc-scaleup-runner/${OCP_VERSION}
+export RUNNER_WORKER_DIR=${WORKSPACE}/ocp4-winc-scaleup-runner/${OCP_VERSION}
 export WINC_REPO="windows-machine-config-bootstrapper"
 # export KUBECONFIG_DIR=${WORKSPACE}/installer
 

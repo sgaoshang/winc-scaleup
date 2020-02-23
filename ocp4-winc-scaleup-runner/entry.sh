@@ -16,10 +16,10 @@ cd ${RUNNER_WORKER_DIR}
   for WORKER in ${WINC_WORKERS}
   do
     echo ${WORKER}
-    IFS=","; read -ra WORK_INFO <<< ${WORKER}
-    export WINC_NODE_IP=${WORK_INFO[0]}
-    export WINC_NODE_USER=${WORK_INFO[1]}
-    export WINC_NODE_PASSWORD=${WORK_INFO[2]}
+    IFS="," read -ra WORKER_INFO <<< ${WORKER}
+    export WINC_NODE_IP=${WORKER_INFO[0]}
+    export WINC_NODE_USER=${WORKER_INFO[1]}
+    export WINC_NODE_PASSWORD=${WORKER_INFO[2]}
 
     # inventory generation
     ansible-playbook generate_inventory.yaml -v

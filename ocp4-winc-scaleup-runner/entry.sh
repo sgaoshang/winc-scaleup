@@ -5,21 +5,21 @@ set -xe
 # export RUNNER_WORKER_DIR=${WORKSPACE}/v4-testing-misc/v4-scaleup-next/ocp4-winc-scaleup-runner/${OCP_VERSION}
 export RUNNER_WORKER_DIR=${WORKSPACE}/ocp4-winc-scaleup-runner/${OCP_VERSION}
 export WINC_REPO="windows-machine-config-bootstrapper"
-# export KUBECONFIG_DIR=${WORKSPACE}/installer
 
 cd ${RUNNER_WORKER_DIR}
+  # wget KUBECONFIG_URL
+  # export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
+  git clone https://github.com/openshift/${WINC_REPO} --depth=1
+
+  # TODO: add multply workes parallel
+  echo ${WINC_WORKERS}
+
   # inventory generation
   ansible-playbook generate_inventory.yaml -v
-  # export KUBECONFIG="${KUBECONFIG_DIR}/auth/kubeconfig"
-  # wget kubeconfig
-  # export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
   cat inventory
 
   # Check windows connection
   ansible win -i inventory -m win_ping -v
-
-  # TODO: setup go env here or in scaleup_pre_hook.yaml
-  git clone https://github.com/openshift/windows-machine-config-bootstrapper --depth=1
 
   case "${OPERATION}" in
   "SCALEUP" )

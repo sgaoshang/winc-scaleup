@@ -1,0 +1,69 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Set vars from environments
+    set_fact:
+      winc_node_ip: "{{ lookup('env', 'WINC_NODE_IP') }}"
+      winc_node_user: "{{ lookup('env', 'WINC_NODE_USER') }}"
+      winc_node_password: "{{ lookup('env', 'WINC_NODE_PASSWORD') }}"
+      cluster_address: "{{ lookup('env', 'CLUSTER_ADDRESS') }}"
+      kubeconfig_url: "{{ lookup('env', 'KUBECONFIG_URL') }}"
+      kubeconfig_dir: "{{ lookup('env', 'KUBECONFIG_DIR') }}"
+      # ocp_version: "{{ lookup('env', 'OCP_VERSION') }}"
+  - block:
+    - assert:
+        that:
+          - winc_node_ip != ""
+          - winc_node_user != ""
+          - winc_node_password != ""
+          - cluster_address != ""
+          - kubeconfig_url != ""
+
+  - name: Inventory generation
+    template: 
+      src: inventory.j2
+      dest: inventory
+
+  # - name: Set extra_vars
+  #   block:
+  #   - include_vars:
+  #       file: "files/default_extra_vars.yaml"
+  #       name: default_extra_vars
+  #   - debug:
+  #       msg: "{{ default_extra_vars }}"
+  #   - set_fact:
+  #       user_extra_vars: "{{ ( lookup('env', 'EXTRA_VARS') + '\nplaceholder: true' ) | from_yaml }}"
+  #   - debug:
+  #       msg: "{{ user_extra_vars }}"
+  #   - set_fact:
+  #       extra_vars: "{{ default_extra_vars | combine(user_extra_vars, recursive=True) }}"
+  #   - debug: var=extra_vars
+
+  - name: Fetch cluster auth files
+    block:
+    # - name: Create temporary install working directory
+    #   tempfile:
+    #     state: directory
+    #     prefix: installer-
+    #   register: tempdir
+    - name: Create auth directory
+      file:
+        path: "{{ kubeconfig_dir.path }}/auth"
+        state: directory
+        mode: '0755'
+    - get_url:
+        url: "{{ kubeconfig_url }}"
+        dest: "{{ kubeconfig_dir.path }}/auth/kubeconfig"
+        validate_certs: no
+    - get_url:
+        url: "{{ kubeconfig_url }}/../kubeadmin-password"
+        dest: "{{ kubeconfig_dir.path }}/auth/kubeadmin-password"
+        validate_certs: no
+      when: "'https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/' in kubeconfig_url"
+
+  # - set_fact:
+  #     kubeconfig_path: "{{ tempdir.path }}/auth/kubeconfig"
+
+  # - set_fact:
+  #     install_working_directory: "{{ tempdir.path }}"
+  #   when: "'https://openshift-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/' in kubeconfig_url"

@@ -1,0 +1,24 @@
+####### Extra Vars Start #######
+# {% for key, value in extra_vars.iteritems() %}
+# {{ key }}="{{ value }}"
+# {% endfor%}
+####### Extra Vars End #######
+
+# TODO: not used yet
+# ocp_version="{{ ocp_version }}"
+
+# TODO: use ansible_facts, conflicts when multy job running?
+[win]
+# Address of a node and its Windows password
+"{{ winc_node_ip }}" ansible_password="{{ winc_node_password }}"
+
+[win:vars]
+# Windows username, typically 'Administrator'
+ansible_user="{{ winc_node_user }}"
+# Address of the OpenShift cluster e.g. "foo.fah.com". This should not include "https://api-" or a port
+cluster_address="{{ cluster_address }}"
+
+ansible_connection=winrm
+ansible_ssh_port=5986
+# Required if you do not wish to set up a certificate
+# ansible_winrm_server_cert_validation=ignore

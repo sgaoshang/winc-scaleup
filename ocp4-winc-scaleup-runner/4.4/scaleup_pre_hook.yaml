@@ -1,0 +1,15 @@
+---
+- set_fact:
+  work_dir: "{{ lookup('env', 'WORKSPACE') if lookup('env', 'WORKSPACE') != '' else lookup('env', 'HOME') }}"
+  winc_repo: "{{ lookup('env', 'WINC_REPO') }}"
+
+- name: Pre-hook from winc scale up
+  hosts: localhost
+  gather_facts: no
+  tasks:
+
+  # TODO: github not stable issue
+  - name: Git clone winc repository
+    git:
+      repo: 'https://github.com/openshift/{{ winc_repo }}.git'
+      dest: "{{ work_dir }}/{{ winc_repo }}"

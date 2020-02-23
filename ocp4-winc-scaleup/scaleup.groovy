@@ -22,7 +22,7 @@ pipeline {
                 BUILD_NUMBER = "${env.FLEXY_BUILD_NUMBER}"
             }
             steps {
-                copyArtifacts filter: 'workdir/kubeconfig, workdir/vminfo.yml',
+                copyArtifacts filter: 'workdir/install-dir/vminfo.yml',
                               fingerprintArtifacts: true,
                               flatten: true,
                               projectName: 'Launch Environment Flexy',

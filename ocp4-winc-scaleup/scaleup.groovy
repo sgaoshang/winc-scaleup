@@ -1,3 +1,5 @@
+def WINC_WORKERS=""
+
 pipeline {
     agent {
         label "${params.JENKINS_SLAVE_LABEL}"
@@ -34,7 +36,7 @@ pipeline {
                         # wget ${WNI_URL} --quiet
                         # chmod 777 wni
                         # ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
-                        export WINC_WORKERS="worker-test,use-test,pass-test"
+                        ${WINC_WORKERS}="worker-test,use-test,pass-test"
                         """
                       }
                     }
@@ -48,7 +50,7 @@ pipeline {
                     // def rhelProps = readJSON file: windows-node-installer.json
                     build job: 'ocp4-winc-scaleup-runner', parameters: [
                         string(name: 'OPERATION', value: "SCALEUP"),
-                        string(name: 'WINC_WORKERS', value: "${env.WINC_WORKERS}"),
+                        string(name: 'WINC_WORKERS', value: "${WINC_WORKERS}"),
                         string(name: 'KUBECONFIG_URL', value: "${env.KUBECONFIG_URL}"),
                         string(name: 'OCP_VERSION', value: "4.4"),
                         [$class: 'LabelParameterValue', name: 'JENKINS_SLAVE_LABEL', label: "${params.JENKINS_SLAVE_LABEL}"],

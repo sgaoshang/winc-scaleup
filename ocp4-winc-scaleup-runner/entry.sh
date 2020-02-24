@@ -7,10 +7,10 @@ export RUNNER_WORKER_DIR=${WORKSPACE}/ocp4-winc-scaleup-runner/${OCP_VERSION}
 export WINC_REPO="windows-machine-config-bootstrapper"
 
 cd ${RUNNER_WORKER_DIR}
-  # wget KUBECONFIG_URL
-  # export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
-  export CLUSTER_ADDRESS="test"
-  # git clone https://github.com/openshift/${WINC_REPO} --depth=1
+  git clone https://github.com/openshift/${WINC_REPO} --depth=1
+  wget ${KUBECONFIG_URL} --no-check-certificate
+  export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
+  export CLUSTER_ADDRESS=`oc cluster-info | grep -Po '(?<=https://api.).*(?=:6443)'`
 
   # TODO: add multply workes in parallel when supported in wsu
   for WORKER in ${WINC_WORKERS}

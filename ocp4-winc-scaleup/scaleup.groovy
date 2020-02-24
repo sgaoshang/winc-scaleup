@@ -30,10 +30,10 @@ pipeline {
                         file(credentialsId: 'b73d6ed3-99ff-4e06-b2d8-64eaaf69d1db', variable: 'AWS_CREDS'),
                         ]) {
                         sh """
-                        // wget ${KUBECONFIG_URL} --no-check-certificate
-                        // wget ${WNI_URL} --quiet
-                        // chmod 777 wni
-                        // ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
+                        wget ${KUBECONFIG_URL} --no-check-certificate
+                        # wget ${WNI_URL} --quiet
+                        # chmod 777 wni
+                        # ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
                         env.WINC_WORKERS="worker-test,use-test,pass-test"
                         """
                       }

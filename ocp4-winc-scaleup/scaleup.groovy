@@ -79,7 +79,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'kubeconfig, windows-node-installer.json, winc_workers.txt, wni', fingerprint: true
-            cleanWs()
+            // cleanWs()
         }
     }
 }

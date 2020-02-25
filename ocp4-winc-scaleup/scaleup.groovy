@@ -33,7 +33,7 @@ pipeline {
                         wget ${KUBECONFIG_URL} --no-check-certificate
                         export KUBECONFIG=kubeconfig
                         hybrid_query=`oc get network.operator cluster -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.hybridOverlayConfig.hybridClusterNetwork}'`
-                        if [ ${hybrid_query} == "" ]; then
+                        if [ $hybrid_query == "" ]; then
                             # oc patch network.operator cluster --type=merge -p '{"spec":{"defaultNetwork":{"ovnKubernetesConfig":{"hybridOverlayConfig":{"hybridClusterNetwork":[{"cidr":"10.132.0.0/14","hostPrefix":23}]}}}}}'
                             echo "TODO: set hybrid query"
                         fi

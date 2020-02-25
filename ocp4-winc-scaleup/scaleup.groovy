@@ -30,7 +30,7 @@ pipeline {
                         file(credentialsId: 'b73d6ed3-99ff-4e06-b2d8-64eaaf69d1db', variable: 'AWS_CREDS'),
                         ]) {
                         sh """
-                        wget ${KUBECONFIG_URL} --no-check-certificate
+                        rm -rf kubeconfig; wget ${KUBECONFIG_URL} --no-check-certificate
                         export KUBECONFIG=kubeconfig
                         hybrid_query=`oc get network.operator cluster -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.hybridOverlayConfig.hybridClusterNetwork}'`
                         # echo \$hybrid_query
@@ -49,7 +49,7 @@ pipeline {
                                 loop_counter=\$(( loop_counter+1 ))
                             done
                         fi
-                        wget ${WNI_URL} --quiet
+                        rm -rf wni; wget ${WNI_URL} --quiet
                         chmod 777 wni
                         script -c './wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem'
                         wni_output=`cat typescript`
@@ -79,7 +79,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'kubeconfig, windows-node-installer.json, winc_workers.txt, wni', fingerprint: true
-            // cleanWs()
+            cleanWs()
         }
     }
 }

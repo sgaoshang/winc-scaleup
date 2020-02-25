@@ -33,10 +33,10 @@ pipeline {
                         ]) {
                         sh """
                         wget ${KUBECONFIG_URL} --no-check-certificate
-                        # wget ${WNI_URL} --quiet
-                        # chmod 777 wni
-                        # ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
-                        ${WINC_WORKERS}="worker-test,use-test,pass-test"
+                        wget ${WNI_URL} --quiet
+                        chmod 777 wni
+                        ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
+                        echo "worker-test,user-test,password-test" > winc_workers.txt
                         """
                       }
                     }
@@ -47,7 +47,7 @@ pipeline {
         stage ('Run scale-up job') {
             steps {
                 script {
-                    // def rhelProps = readJSON file: windows-node-installer.json
+                    WINC_WORKERS =  readFile('winc_workers.txt').trim()
                     build job: 'ocp4-winc-scaleup-runner', parameters: [
                         string(name: 'OPERATION', value: "SCALEUP"),
                         string(name: 'WINC_WORKERS', value: "${WINC_WORKERS}"),

@@ -7,7 +7,7 @@ export RUNNER_WORKER_DIR=${WORKSPACE}/ocp4-winc-scaleup-runner/${OCP_VERSION}
 export WINC_REPO="windows-machine-config-bootstrapper"
 
 cd ${RUNNER_WORKER_DIR}
-  git clone https://github.com/openshift/${WINC_REPO} --depth=1
+  # git clone https://github.com/openshift/${WINC_REPO} --depth=1
   wget ${KUBECONFIG_URL} --no-check-certificate
   export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
   export CLUSTER_ADDRESS=`oc cluster-info | grep -Po '(?<=https://api.).*(?=:6443)'`
@@ -30,7 +30,7 @@ cd ${RUNNER_WORKER_DIR}
 
     case "${OPERATION}" in
     "SCALEUP" )
-      # ansible-playbook -i inventory scaleup_pre_hook.yaml -v
+      ansible-playbook -i inventory scaleup_pre_hook.yaml -v
       ansible-playbook -i inventory ${RUNNER_WORKER_DIR}/${WINC_REPO}/tools/ansible/tasks/wsu/main.yml -v
       ansible-playbook -i inventory scaleup_post_hook.yaml -v
     ;;

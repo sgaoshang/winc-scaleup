@@ -1,5 +1,3 @@
-def WINC_WORKERS=""
-
 pipeline {
     agent {
         label "${params.JENKINS_SLAVE_LABEL}"
@@ -33,9 +31,15 @@ pipeline {
                         ]) {
                         sh """
                         wget ${KUBECONFIG_URL} --no-check-certificate
+                        export KUBECONFIG=kubeconfig
+                        hybrid_query=`oc get network.operator cluster -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.hybridOverlayConfig.hybridClusterNetwork}'`
+                        if [ ${hybrid_query} == "" ]; then
+                            # oc patch network.operator cluster --type=merge -p '{"spec":{"defaultNetwork":{"ovnKubernetesConfig":{"hybridOverlayConfig":{"hybridClusterNetwork":[{"cidr":"10.132.0.0/14","hostPrefix":23}]}}}}}'
+                            echo "TODO: set hybrid query"
+                        fi
                         wget ${WNI_URL} --quiet
                         chmod 777 wni
-                        # ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
+                        # wni_putput=`./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem`
                         echo "worker-test,user-test,password-test" > winc_workers.txt
                         """
                       }
@@ -61,7 +65,7 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts artifacts: 'windows-node-installer.json', fingerprint: true
+            archiveArtifacts artifacts: 'windows-node-installer.json, winc_workers.txt', fingerprint: true
             cleanWs()
         }
     }

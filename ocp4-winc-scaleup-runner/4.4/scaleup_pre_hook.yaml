@@ -8,7 +8,6 @@
   gather_facts: no
   tasks:
 
-  # TODO: github not stable issue
   - name: Git clone winc repository
     git:
       repo: 'https://github.com/openshift/{{ winc_repo }}.git'

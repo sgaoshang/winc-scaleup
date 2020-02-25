@@ -33,15 +33,26 @@ pipeline {
                         wget ${KUBECONFIG_URL} --no-check-certificate
                         export KUBECONFIG=kubeconfig
                         hybrid_query=`oc get network.operator cluster -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.hybridOverlayConfig.hybridClusterNetwork}'`
-                        echo \$hybrid_query
+                        # echo \$hybrid_query
                         if [ "\$hybrid_query" == "" ]; then
-                            # oc patch network.operator cluster --type=merge -p '{"spec":{"defaultNetwork":{"ovnKubernetesConfig":{"hybridOverlayConfig":{"hybridClusterNetwork":[{"cidr":"10.132.0.0/14","hostPrefix":23}]}}}}}'
-                            echo "TODO: set hybrid query"
+                            oc patch network.operator cluster --type=merge -p '{"spec":{"defaultNetwork":{"ovnKubernetesConfig":{"hybridOverlayConfig":{"hybridClusterNetwork":[{"cidr":"10.132.0.0/14","hostPrefix":23}]}}}}}'
+                            # Wait until openshift-ovn-kubernetes pod ready
+                            loop_counter=0
+                            while [ \$loop_counter -le 10 ]
+                            do
+                                status=`oc get pod -n openshift-ovn-kubernetes --field-selector=status.phase!=Running`
+                                if [ X\$status == X"" ]; then
+                                    break
+                                fi
+                                echo "Waiting for openshift-ovn-kubernetes pod ready: $n times."
+                                sleep 10
+                                loop_counter=\$(( loop_counter+1 ))
+                            done
                         fi
                         wget ${WNI_URL} --quiet
                         chmod 777 wni
-                        # wni_putput=`./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem`
-                        echo "worker-test,user-test,password-test" > winc_workers.txt
+                        wni_putput=`./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem`
+                        echo \$wni_putput | grep -Po "(?<=Windows instance created at ).*(?= using )|(?<= using ).*(?= as user and )|(?<= as user and ).*(?= password)" | tr "\n" "," > winc_workers.txt
                         """
                       }
                     }
@@ -66,7 +77,7 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts artifacts: 'windows-node-installer.json, winc_workers.txt', fingerprint: true
+            archiveArtifacts artifacts: 'kubeconfig, windows-node-installer.json, winc_workers.txt', fingerprint: true
             cleanWs()
         }
     }

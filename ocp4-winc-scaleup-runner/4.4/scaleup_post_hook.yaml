@@ -4,29 +4,13 @@
   - name: List all nodes
     shell: |
       oc get nodes -o wide
-    environment:
-      KUBECONFIG: "{{ openshift_kubeconfig_path}}"
-    register: nodes
-  - debug: var=nodes.stdout_lines
-
-  # - name: Check the k8s and cri-o version on RHEL worker
-  #   import_tasks: custom_playbook/version_check.yaml
-
-  # - name: Check oc log works well on RHEL worker
-  #   import_tasks: custom_playbook/log_check.yaml
-
-  # - name: Cluster health check
-  #   block:
-  #   - name: Ensure install complete
-  #     shell: "openshift-install wait-for install-complete --dir {{ install_working_directory }}"
-  #     when: "(install_working_directory is defined) and (install_working_directory != '')"
+    # environment:
+    #   KUBECONFIG: "{{ openshift_kubeconfig_path}}"
+    register: nodes_status
+  - debug: msg=nodes_status.stdout_lines
 
     - name: List all operator status
       shell: |
         oc get co
-      register: op_status
-      environment:
-        KUBECONFIG: "{{ openshift_kubeconfig_path }}"
-
-    - debug:
-        msg: "{{ op_status.stdout_lines }}"
+      register: operators_status
+    - debug: msg="{{ operators_status.stdout_lines }}"

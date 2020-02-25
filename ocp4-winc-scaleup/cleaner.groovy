@@ -3,6 +3,10 @@ pipeline {
         label "sgao-winc"
     }
 
+    environment {
+        WNI_URL="https://github.com/openshift/windows-machine-config-bootstrapper/releases/download/v4.4.2-alpha/wni"
+    }
+
     stages {
         stage('Set job name to triggered user') {
             steps {
@@ -36,6 +40,7 @@ pipeline {
                         file(credentialsId: 'b73d6ed3-99ff-4e06-b2d8-64eaaf69d1db', variable: 'AWS_CREDS'),
                         ]) {
                         sh """
+                        rm -rf wni; wget ${WNI_URL} --quiet; chmod 777 wni
                         ./wni aws destroy --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default
                         """
                       }

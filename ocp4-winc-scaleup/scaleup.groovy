@@ -44,7 +44,7 @@ pipeline {
                                 if [ X\$status == X"" ]; then
                                     break
                                 fi
-                                echo "Waiting for openshift-ovn-kubernetes pod ready: $n times."
+                                echo "Waiting for openshift-ovn-kubernetes pod ready: \$loop_counter times."
                                 sleep 10
                                 loop_counter=\$(( loop_counter+1 ))
                             done

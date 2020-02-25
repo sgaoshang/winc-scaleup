@@ -12,6 +12,12 @@ cd ${RUNNER_WORKER_DIR}
   export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
   export CLUSTER_ADDRESS=`oc cluster-info | grep -Po '(?<=https://api.).*(?=:6443)'`
 
+  if [ X${WINC_WORKERS} == X"" ]
+  then
+    echo "WINC_WORKERS is blank ..."
+    exit 1
+  fi
+
   # TODO: add multply workes in parallel when supported in wsu
   for WORKER in ${WINC_WORKERS}
   do

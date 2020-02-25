@@ -51,8 +51,7 @@ pipeline {
                         fi
                         rm -rf wni; wget ${WNI_URL} --quiet
                         chmod 777 wni
-                        script -c './wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem'
-                        wni_output=`cat typescript`
+                        wni_output=`./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem' 2>&1`
                         echo \$wni_output | grep -Po "(?<=Windows instance created at ).*(?= using )|(?<= using ).*(?= as user and )|(?<= as user and ).*(?= password)" | tr "\n" "," > winc_workers.txt
                         """
                       }

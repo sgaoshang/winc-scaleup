@@ -40,6 +40,7 @@ pipeline {
                         file(credentialsId: 'b73d6ed3-99ff-4e06-b2d8-64eaaf69d1db', variable: 'AWS_CREDS'),
                         ]) {
                         sh """
+                        cat windows-node-installer.json
                         rm -rf wni; wget ${WNI_URL} --quiet; chmod 777 wni
                         ./wni aws destroy --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default
                         """

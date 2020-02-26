@@ -53,6 +53,7 @@ pipeline {
                         rm -rf wni; wget ${WNI_URL} --quiet; chmod 777 wni
                         ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
 
+                        cat windows-node-installer.json
                         instance_id=`jq .InstanceIDs[] windows-node-installer.json`
                         instance_ip=`aws ec2 describe-instances --instance-ids \$instance_id --query 'Reservations[*].Instances[*].PublicIpAddress' --output text`
                         instance_user=Administrator # TODO

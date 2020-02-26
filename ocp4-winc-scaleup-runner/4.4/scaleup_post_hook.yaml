@@ -4,10 +4,8 @@
   - name: List all nodes
     shell: |
       oc get nodes -o wide
-    # environment:
-    #   KUBECONFIG: "{{ openshift_kubeconfig_path}}"
     register: nodes_status
-  - debug: msg=nodes_status.stdout_lines
+  - debug: msg="{{ nodes_status.stdout_lines }}"
 
   - name: List all operator status
     shell: |

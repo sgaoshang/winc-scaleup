@@ -8,7 +8,7 @@ export WINC_REPO="windows-machine-config-bootstrapper"
 
 cd ${RUNNER_WORKER_DIR}
   # git clone https://github.com/openshift/${WINC_REPO} --depth=1
-  wget ${KUBECONFIG_URL} --no-check-certificate
+  rm -rf kubeconfig; wget ${KUBECONFIG_URL} --no-check-certificate
   export KUBECONFIG="${RUNNER_WORKER_DIR}/kubeconfig"
   export CLUSTER_ADDRESS=`oc cluster-info | grep -Po '(?<=https://api.).*(?=:6443)'`
 

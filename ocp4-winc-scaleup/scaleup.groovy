@@ -50,8 +50,15 @@ pipeline {
                             done
                         fi
                         rm -rf wni; wget ${WNI_URL} --quiet; chmod 777 wni
-                        wni_output=`./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem 2>&1`
-                        echo \$wni_output | grep -Po "(?<=Windows instance created at ).*(?= using )|(?<= using ).*(?= as user and )|(?<= as user and ).*(?= password)" | tr "\n" "," > winc_workers.txt
+                        # wni_output=`./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem 2>&1`
+                        # echo \$wni_output | grep -Po "(?<=Windows instance created at ).*(?= using )|(?<= using ).*(?= as user and )|(?<= as user and ).*(?= password)" | tr "\n" "," > winc_workers.txt
+                        ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
+                        instance_id=`jq .InstanceIDs[] windows-node-installer.json`
+                        instance_ip=`aws ec2 describe-instances --instance-ids i-00ec2b96d51673dd2 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text`
+                        # TODO
+                        instance_user=Administrator
+                        instance_password=`aws ec2 get-password-data --instance-id i-00ec2b96d51673dd2 --priv-launch-key ~/.ssh/openshift-qe.pem --query 'PasswordData' --output text`
+                        echo "\$instance_ip,\$instance_user,\$instance_password" > winc_workers.txt
                         """
                       }
                     }

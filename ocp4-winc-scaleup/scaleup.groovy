@@ -54,9 +54,9 @@ pipeline {
                         ./wni aws create --kubeconfig kubeconfig --credentials ${AWS_CREDS} --credential-account default --instance-type m5a.large --ssh-key openshift-qe --private-key ~/.ssh/openshift-qe.pem
 
                         instance_id=`jq .InstanceIDs[] windows-node-installer.json`
-                        instance_ip=`aws ec2 describe-instances --instance-ids i-00ec2b96d51673dd2 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text`
+                        instance_ip=`aws ec2 describe-instances --instance-ids \$instance_id --query 'Reservations[*].Instances[*].PublicIpAddress' --output text`
                         instance_user=Administrator # TODO
-                        instance_password=`aws ec2 get-password-data --instance-id i-00ec2b96d51673dd2 --priv-launch-key ~/.ssh/openshift-qe.pem --query 'PasswordData' --output text`
+                        instance_password=`aws ec2 get-password-data --instance-id \$instance_id --priv-launch-key ~/.ssh/openshift-qe.pem --query 'PasswordData' --output text`
                         echo "\$instance_ip,\$instance_user,\$instance_password" > winc_workers.txt
 
                         """

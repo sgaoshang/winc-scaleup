@@ -37,7 +37,7 @@ cd ${RUNNER_WORKER_DIR}
     case "${OPERATION}" in
     "SCALEUP" )
       # ansible-playbook -i inventory scaleup_pre_hook.yaml -v
-      ansible-playbook -i inventory ${RUNNER_WORKER_DIR}/${WINC_REPO}/tools/ansible/tasks/wsu/main.yml -v
+      ansible-playbook -i inventory ${RUNNER_WORKER_DIR}/${WINC_REPO}/tools/ansible/tasks/wsu/main.yaml -v
       ansible-playbook -i inventory scaleup_post_hook.yaml -v
     ;;
     * )

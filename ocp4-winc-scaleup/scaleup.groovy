@@ -58,6 +58,7 @@ pipeline {
                         instance_ip=`aws ec2 describe-instances --instance-ids \$instance_id --query 'Reservations[*].Instances[*].PublicIpAddress' --output text`
                         instance_user=Administrator # TODO
                         instance_password=`aws ec2 get-password-data --instance-id \$instance_id --priv-launch-key ~/.ssh/openshift-qe.pem --query 'PasswordData' --output text`
+                        echo "Note: xfreerdp /u:\$instance_user /v:\$instance_ip /h:1080 /w:1920 /p:\$instance_password"
                         echo "\$instance_ip,\$instance_user,\$instance_password" > winc_workers.txt
 
                         """

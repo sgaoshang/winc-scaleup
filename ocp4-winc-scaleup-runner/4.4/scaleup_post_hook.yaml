@@ -9,8 +9,8 @@
     register: nodes_status
   - debug: msg=nodes_status.stdout_lines
 
-    - name: List all operator status
-      shell: |
-        oc get co
-      register: operators_status
-    - debug: msg="{{ operators_status.stdout_lines }}"
+  - name: List all operator status
+    shell: |
+      oc get co
+    register: operators_status
+  - debug: msg="{{ operators_status.stdout_lines }}"

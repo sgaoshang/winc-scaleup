@@ -1,7 +1,5 @@
 ---
-- name: Pre-hook from winc scale up
-  hosts: localhost
-  gather_facts: no
+- hosts: localhost
   tasks:
   - name: Set vars from environments
     set_fact:
